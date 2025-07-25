@@ -7,7 +7,7 @@
 //----------------------------------
 //  Global Variables
 //----------------------------------
-const DEV_MODE = true; //TODO
+const DEV_MODE = false;
 const toggleBtn = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("app-sidebar");
 const overlay = document.getElementById("sidebar-overlay");
