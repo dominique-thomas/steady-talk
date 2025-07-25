@@ -1,0 +1,263 @@
+/*
+  Project: Steady Talk
+  Description: Styles for the mock interview company profile page.
+  Author: Dominique Thomas (github.com/dominique-thomas)
+  License: Shared publicly for demonstration purposes only. Reuse or redistribution not permitted without permission.
+*/
+body {
+    background-color: #f9f9f9;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+p,
+.has-grey-text {
+    color: #555;
+}
+
+nav.navbar {
+    background-color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.navbar-item {
+    padding: 0.5rem 1rem;
+    color: #555;
+    font-weight: 500;
+    padding: 10px;
+}
+
+.navbar-item:hover {
+    color: #222;
+    background-color: #e7e7e7;
+    border-radius: 5px;
+}
+
+.hero {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.header-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding: 1rem 2rem;
+}
+
+.section {
+    padding: 2rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: -20px;
+    color: #fff;
+}
+
+p.subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: #fff;
+}
+
+.content h2 {
+    font-size: 2rem;
+    margin: 3rem 0 2rem;
+    text-align: center;
+}
+
+.content h3 {
+    font-size: 1.3rem;
+    margin: 2rem 0 0.5rem;
+    font-weight: 600;
+}
+
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.card {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    flex: 1 1 260px;
+    max-width: 300px;
+}
+
+.card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: -1rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.card .title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: -15px;
+    color: #222;
+}
+
+.card .subtitle {
+    font-weight: normal;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #222;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: #555;
+    font-weight: normal;
+}
+
+.box {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.contact-info {
+    flex: 1 1 45%;
+    max-width: 48%;
+    text-align: center;
+}
+
+.contact-info>p {
+    color: #222 !important;
+}
+
+.map {
+    flex: 1 1 45%;
+    max-width: 48%;
+    width: 100%;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+footer.footer {
+    padding: 2rem;
+    border-top: 1px solid #eee;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+    background-color: #fff;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 45px;
+    height: 45px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    z-index: 1000;
+    opacity: 0.7;
+}
+
+#team {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.back-to-top:hover {
+    opacity: 1;
+}
+
+@media (max-width: 1024px) {
+    .hero {
+        height: 250px;
+    }
+
+    .header-img {
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .contact-info {
+        text-align: center;
+    }
+
+    nav.navbar {
+        justify-content: center;
+    }
+}

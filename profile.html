@@ -1,0 +1,70 @@
+<!--
+  Project: Steady Talk
+  Description: Standalone mock company profile page for interview practice. Displays company mission, values, team bios, and industry-specific details.
+  Author: Dominique Thomas (github.com/dominique-thomas)
+  License: Shared publicly for demonstration purposes only. Reuse or redistribution not permitted without permission.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Profile</title>
+    <link rel="stylesheet" href="css/profile.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+    <nav class="navbar">
+        <a class="navbar-item" href="#about">About Us</a>
+        <a class="navbar-item" href="#team">Meet the Team</a>
+        <a class="navbar-item" href="#contact">Contact</a>
+    </nav>
+
+    <section class="hero">
+        <img id="header-img" class="header-img" src="images/team.png" alt="Profile Image" />
+        <div class="overlay-text">
+            <h1 class="title" id="company-name">Placeholder</h1>
+            <p class="subtitle" id="tagline">Placeholder</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="content">
+            <h2 id="about">About Us</h2>
+            <p id="info">Placeholder</p>
+
+            <h3>What Makes Us Unique</h3>
+            <p id="unique">Placeholder</p>
+
+            <h3>Our Core Values</h3>
+            <div id="values-container">Placeholder</div>
+
+            <h2 id="team">Meet the Team</h2>
+            <div class="card-grid" id="team-container"></div>
+
+            <h2 id="contact">Contact Us</h2>
+            <div class="box">
+                <div class="contact-info">
+                    <p><strong>Email:</strong> <span id="contact-email">Placeholder</span></p>
+                    <p><strong>Phone:</strong> <span id="contact-phone">Placeholder</span></p>
+                    <p><strong>Hours:</strong> <span id="contact-hours">Placeholder</span></p>
+                </div>
+                <img src="images/map.png" alt="Map of our HQ" class="map" />
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; <span id="year"></span> <span id="footer-company-name">Placeholder</span>. All rights reserved.</p>
+    </footer>
+
+    <a href="#top" class="back-to-top">
+        <i class="fas fa-caret-up"></i>
+    </a>
+
+    <script src="js/data.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

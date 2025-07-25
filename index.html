@@ -1,0 +1,488 @@
+<!--
+  Project: Steady Talk
+  Description: Entry point for the Steady Talk app. Hosts navigation, interview flow, and dynamic content areas.
+  Author: Dominique Thomas (github.com/dominique-thomas)
+  License: Shared publicly for demonstration purposes only. Reuse or redistribution not permitted without permission.
+-->
+<!DOCTYPE html>
+<html lang="en">  
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google" content="notranslate">
+    <title>Steady Talk</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/index.css" />
+</head>
+
+<body>
+
+    <!-- Warnings -->
+    <div id="speech-warning" class="warning-box hidden">
+        <div class="warning-message">
+            <h3>Camera Recognition Not Supported</h3>
+            <p>Your browser does not support camera recognition. Please switch to a Chromium-based browser such as Chrome, Edge, or Brave.</p>
+        </div>
+    </div>
+
+    <div id="camera-not-detected-warning" class="warning-box hidden">
+        <div class="warning-message">
+            <h3>Camera Not Detected</h3>
+            <p>Your camera was not detected. Please check your device settings or reconnect your camera. Refresh the page to try again.</p>
+        </div>
+    </div>
+
+
+    <div id="app" class="hidden">
+
+        <div id="loading-overlay" class="fade-in hidden">
+            <p class="loading-text">Wrapping up...</p>
+        </div>
+
+        <!-- Intro Overlay -->
+        <div id="intro-overlay" class="overlay">
+
+            <div id="intro-gate" class="intro">
+                <h1>Welcome to Steady Talk</h1>
+
+                <p>Steady Talk is a simulation designed to help you practice real-world interview skills using your camera.
+                    <br><br>
+
+                    During interviews you may be prompted to grant access to your camera. You'll only need to do this once. <a href="images/permissions.png" alt="Setting Permissions" title="Setting Permissions" target="_blank">Click here</a> to see an example on how to grant access to your device.
+
+                    <br><br>
+                    Click the button below to continue.
+                </p>
+                <br>
+                <button id="startIntroBtn" class="primary-btn" title="Continue">Continue</button>
+            </div>
+
+            <!-- Intro Video -->
+            <div id="codyIntroVideo" class="avatar-row hidden">
+                <div class="avatar-block">
+                    <video id="codyVideo" playsinline autoplay class="mentor-video">
+                        <source src="" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+
+            <!-- Intro Chat/Form -->
+            <section id="onboarding-step" class="hidden onboarding-step">
+                <div id="onboarding-chat">
+                    <div class="onboarding-chat-wrapper">
+                        <div id="onboarding-chat-zone" class="dashboard-chat-zone">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="onboarding-form hidden">
+                    <div class="field-group">
+                        <label for="username">Full Name</label>
+                        <input type="text" id="username" placeholder="e.g., Alex Doe" />
+                    </div>
+
+                    <div class="field-group">
+                        <p class="label">Select an Industry</p>
+                        <div class="industry-options">
+                            <button class="industry-btn" data-value="healthcare" title="Healthcare">
+                                <i class="fas fa-stethoscope"></i> Healthcare
+                            </button>
+                            <button class="industry-btn" data-value="it" title="Information Technology">
+                                <i class="fas fa-laptop-code"></i> Information Technology
+                            </button>
+                            <button class="industry-btn" data-value="industrial" title="Industrial">
+                                <i class="fas fa-truck-moving"></i> Industrial
+                            </button>
+                            <button class="industry-btn" data-value="random" title="Pick for Me">
+                                <i class="fas fa-shuffle"></i> Pick for Me
+                            </button>
+                        </div>
+                        <input type="hidden" id="selectedIndustry" />
+                    </div>
+
+                    <button id="submitOnboarding" class="primary-btn" title="Submit">Submit</button>
+                    <p id="onboardingError" class="error-msg hidden">Please enter your full name and select an industry.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Main App Layout -->
+        <div id="app-shell" class="app-shell hidden">
+
+            <!-- Sidebar -->
+            <aside id="app-sidebar" class="app-sidebar">
+                <h2>Interview Journey</h2>
+                <ul>
+                    <li class="active default journey-item" title="Mentor Tips">
+                        <span class="icon"><i class="fas fa-comments"></i></span> Mentor Tips
+                    </li>
+                    <li class="locked journey-item" title="Company Profile">
+                        <span class="icon"><i class="fas fa-lock"></i></span> Company Profile
+                    </li>
+                    <li class="locked journey-item" title="Prescreen Interview">
+                        <span class="icon"><i class="fas fa-lock"></i></span> Prescreen Interview
+                    </li>
+                    <li class="locked journey-item" title="Hiring Manager Interview">
+                        <span class="icon"><i class="fas fa-lock"></i></span> Hiring Manager Interview
+                    </li>
+                    <li class="locked journey-item" title="Team Fit Interview">
+                        <span class="icon"><i class="fas fa-lock"></i></span> Team Fit Interview
+                    </li>
+                    <hr class="navbar-divider">
+                    <h2>Tools</h2>
+                    <li id="tool-change-industry" class="default" title="Change Industry" onclick="changeIndustry()">
+                        <span class="icon"><i class="fas fa-sync-alt"></i></span> Change Industry
+                    </li>
+                    <li id="tool-resources" class="default" title="Resources" onclick="showResources()">
+                        <span class="icon"><i class="fas fa-book"></i></span> Resources
+                    </li>
+
+                    <hr class="navbar-divider">
+                    <h2>App Info</h2>
+                    <li id="tool-about" class="default" title="About" onclick="showAbout()">
+                        <span class="icon"><i class="fas fa-circle-info"></i></span> About
+                    </li>
+
+                    <li id="tool-reset-progress" class="default" title="Reset Progress" onclick="resetProgress()">
+                        <span class="icon"><i class="fas fa-redo"></i></span> Reset Progress
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Main Panel -->
+            <div class="app-main" id="app-main">
+                <header class="app-topbar">
+
+                    <button id="menu-toggle" class="hamburger-btn" aria-label="Toggle Navigation">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+                    <h1>Steady Talk</h1>
+                    <div class="user-badge" onclick="updateUsername()" title="Change Name">DT</div>
+                </header>
+
+                <main class="app-content">
+
+                    <!-- Mentor Tips -->
+                    <section id="dashboard-view" class="view-container active">
+                        <div id="dashboard-cody" class="section">
+                            <div class="section-wrapper">
+                                <h2>Mentor Tips</h2>
+                                <div class="chat-wrapper">
+                                    <div id="main-chat" class="dashboard-chat-zone">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Company Profile -->
+                    <section id="company-view" class="view-container">
+                        <div class="section">
+                            <div class="section-wrapper">
+                                <h2>Company Profile</h2>
+                                <div class="industry-meta">
+                                    <div>
+                                        <strong>Industry:</strong> <span id="industry-label" class="meta-line"></span>
+                                    </div>
+                                    <div>
+                                        <strong>Company Name:</strong> <span id="company-label" class="meta-line"></span>
+                                    </div>
+                                </div>
+                                <div class="company-preview">
+                                    <img src="images/preview-healthcare.png" alt="Company Profile Preview" title="Company Profile Preview">
+                                </div>
+                                <h3 class="section-header">Purpose</h3>
+                                <p>
+                                    Here you can learn about the fictional company you'll be interviewing with. Review their mission, values, and what they do, because you might be asked about them later.
+                                </p>
+                                <p>
+                                    The company site opens in a new tab; however, you can return to this section anytime.
+                                    Once you've reviewed the information, you can move on to the next interview stage.
+                                </p>
+                                <br>
+                                <a id="launch-company-btn" target="_blank" href="#" onclick="companyWasViewed()">
+                                    <button class="primary-btn" title="Visit Company Profile">
+                                        Visit Company Profile
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Interview Overview -->
+                    <section id="interview-overview-view" class="view-container">
+                        <div class="section">
+                            <div class="section-wrapper">
+                                <h2 id="interview-title"></h2>
+                                <div class="interviewer-block">
+                                    <div id="interviewer-1" class="interviewer-avatar-block">
+                                        <img src="images/team.png" alt="Interviewer" class="interviewer-avatar" id="interviewer-avatar" />
+                                        <div class="interviewer-details">
+                                            <p><strong>Interviewer:</strong> <span id="interviewer-name" class="meta-line"></span></p>
+                                            <p><strong>Role:</strong> <span id="interviewer-role" class="meta-line"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h3 class="section-header">Purpose</h3>
+                                <div class="interview-description">
+                                    <p id="interview-description"></p>
+                                </div>
+                                <br>
+                                <button class="primary-btn" id="start-interview-btn" title="Start Interview">Start Interview</button>
+                                <br><br>
+                                <hr class="navbar-divider">
+                                <h3 class="centered">Last Attempt Summary</h3>
+                                <div class="summary-grid" id="overview-summary">
+                                    <div class="metric-card">
+                                        <h4>Finished</h4>
+                                        <div class="value" id="summary-finished-date"></div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <h4>Answered</h4>
+                                        <div class="value" id="summary-answered"></div>
+                                    </div>
+                                    <div class="metric-card info-card">
+                                        <div class="tooltip-wrapper icon-top-right">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span class="tooltip-text">This estimated score reflects tone, use of relevant language, and how attentive you appeared during the interview.</span>
+                                        </div>
+                                        <h4>Confidence</h4>
+                                        <div class="value" id="summary-confidence-score">90%</div>
+                                    </div>
+                                </div>
+                            </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+
+        <!-- Webcam Check -->
+        <section id="camera-check-view" class="fullscreen-container">
+            <div class="section">
+                <div class="section-wrapper camera-check">
+                    <h2>Camera Check</h2>
+                    <div class="camera-preview-box">
+                        <video id="cameraPreview" autoplay playsinline muted></video>
+                        <div class="avatar-name-overlay" id="camera-preview-label"></div>
+                    </div>
+                    <p class="subtle-label">
+                        Your camera is active. Make sure you're visible and centered. Click <strong>Continue</strong> when you're ready.
+                    </p><br>
+                    <button class="primary-btn" id="continueToInterviewBtn" title="Continue" onclick="startInterview()" disabled>Continue</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interview View -->
+        <section id="interview-view" class="fullscreen-container">
+            <div class="section">
+                <div class="section-wrapper interview-session">
+
+                    <h2 class="interview-title">Prescreen Interview</h2>
+
+                    <div class="interview-video-area">
+                        <div class="avatar-row">
+
+                            <div class="avatar-block">
+                                <div class="question-order-label video-corner-tag" id="question-order"></div>
+
+                                <video id="avatarPromptVideo" playsinline autoplay>
+                                    <source src="videos/placeholder.mp4" type="video/mp4" />
+                                </video>
+                                <div class="avatar-name-overlay" id="avatar-name-1"></div>
+                            </div>
+
+                            <div class="avatar-block hidden">
+                                <video id="avatarPromptVideo2" playsinline autoplay>
+                                    <source src="videos/placeholder.mp4" type="video/mp4" />
+                                </video>
+                                <div class="avatar-name-overlay" id="avatar-name-2"></div>
+                            </div>
+                        </div>
+
+                        <div id="webcam-box">
+                            <video id="userWebcam" autoplay playsinline muted></video>
+                            <div class="mic-indicator disabled" id="micIcon">
+                                <i class="fas fa-microphone"></i>
+                                <div class="avatar-name-overlay hidden" id="username-label"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-block">
+                        <p class="interview-tip" id="interview-tip">
+                            <i class="fas fa-info-circle"></i>
+                            Click <strong>Repeat</strong> to hear the question again, or <strong>Next</strong> when you're ready to continue.
+                        </p>
+
+                        <div id="sample-question-response" class="hidden">
+                            <p class="section-label">Question:</p>
+                            <p id="active-question-text" class="sample-response"></p>
+                            <p class="section-label">Sample Answer:</p>
+                            <p id="sample-answer" class="sample-response"></p>
+                        </div>
+                    </div>
+
+                    <div class="interview-controls">
+                        <div class="left-buttons">
+                            <button class="outline-btn" id="repeat-btn" title="Repeat" onclick="handleRepeatQuestion()">Repeat</button>
+                            <button class="primary-btn" id="next-btn" title="Next" onclick="handleNextQuestion(event)">Next</button>
+                        </div>
+                        <div class="right-button">
+                            <button class="warning-btn" id="quit-btn" title="Stop Interview" onclick="handleStopInterview()">Stop Interview</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Outro Video -->
+        <div id="outro-video-view" class="fullscreen-container avatar-row hidden">
+            <div class="avatar-block">
+                <video id="outroVideo" playsinline autoplay>
+                    <source src="videos/placeholder.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <!-- Summary View -->
+        <section id="summary-view" class="fullscreen-container">
+            <div class="section">
+                <div class="section-wrapper summary">
+
+                    <h2>Interview Summary</h2>
+                    <h4 id="summary-interview-type">Prescreen Interview</h4>
+
+                    <div class="summary-grid">
+                        <div class="metric-card">
+                            <h4>Finished</h4>
+                            <div class="value" id="final-summary-finished-date"></div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Answered</h4>
+                            <div class="value" id="final-summary-answered"></div>
+                        </div>
+                        <div class="metric-card info-card">
+                            <div class="tooltip-wrapper icon-top-right">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltip-text">This estimated score reflects tone, use of relevant language, and how attentive you appeared during the interview.</span>
+                            </div>
+                            <h4>Confidence</h4>
+                            <div class="value" id="final-summary-confidence-score"></div>
+                        </div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <h3 class="section-header summary-h3">Questions and Responses</h2>
+
+                        <div id="summary-question-list">
+                            <div class="question-summary">
+                                <p class="section-label">
+                                    <i class="fas fa-check-circle completed-icon"></i> Question:
+                                </p>
+                                <h4 class="question-text">What drew you to apply for this role?</h4>
+
+                                <p class="section-label">Your Response:</p>
+                                <div class="response-line">
+                                    <p class="response-snippet short-text">I'm excited by the opportunity to work in a mission-driven company...</p>
+                                    <p class="response-snippet full-text hidden">
+                                        I'm excited by the opportunity to work in a mission-driven company. I’ve been following your team for a while now and admire your focus on collaboration and impact. This role lines up well with both my values and my experience.
+                                    </p>
+                                    <button class="circle-toggle-btn" onclick="toggleExpand(this)" title="Expand/Collapse">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+
+                                <div class="insight-box cody-chat-row-left">
+                                    <div class="avatar-side">
+                                        <img src="images/team.png" class="avatar-img" alt="Cody" />
+                                    </div>
+                                    <div class="cody-chat-bubble">
+                                        <p>Nice response - you mentioned mission and excitement. Great start.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="question-summary">
+                                <p class="section-label">
+                                    <i class="fas fa-check-circle completed-icon"></i> Question:
+                                </p>
+                                <h4 class="question-text">What are you looking for in your next opportunity?</h4>
+
+                                <p class="section-label">Your Response:</p>
+                                <p class="response-snippet">I'm looking for a place where I can grow professionally and collaborate with a strong team...</p>
+
+                                <div class="insight-box cody-chat-row-left">
+                                    <div class="avatar-side">
+                                        <img src="images/team.png" class="avatar-img" alt="Cody" />
+                                    </div>
+                                    <div class="cody-chat-bubble">
+                                        <p>Solid - next time, consider mentioning your ideal work environment or role responsibilities.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="question-summary skipped">
+                                <p class="section-label">
+                                    <i class="fas fa-minus-circle skipped-icon"></i> Question:
+                                </p>
+                                <h4 class="question-text">What do you know about our organization?</h4>
+
+                                <p class="section-label">Your Response</p>
+                                <p class="response-snippet muted">Skipped</p>
+                            </div>
+                        </div>
+
+                        <div id="video-download-warning" class="warning-box hidden">
+                            <div class="warning-message">
+                                <h3>Warning</h3>
+                                <p>Video downloads may not work as expected on mobile devices. For best results, use a desktop browser.</p>
+                            </div>
+                        </div>
+
+                        <div class="summary-actions">
+                            <div class="top-row">
+                                <button class="primary-btn" onclick="downloadTranscript()" title="Download Transcript">Download Transcript</button>
+                                <button class="primary-btn" onclick="downloadVideoBlobs()" title="Download Responses">Download Responses</button>
+                            </div>
+                            <div class="bottom-row">
+                                <button class="outline-btn" onclick="showExitSummaryWarning()" title="Close Summary">Close Summary</button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Modal  -->
+        <div class="modal-overlay hidden" id="modal-overlay">
+            <div class="modal-box">
+                <button class="modal-close" id="modal-close" aria-label="Close" title="Close">&times;</button>
+                <h2 class="modal-title" id="modal-title">Modal Title</h2>
+                <div class="modal-body" id="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-detection@1.0.3/dist/face-detection.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection"></script>
+    <script src="js/data.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>
