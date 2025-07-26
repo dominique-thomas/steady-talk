@@ -1685,6 +1685,8 @@ function playInterviewerOutro() {
     micIcon.classList.remove("listening");
     label.classList.add("hidden");
 
+    document.getElementById("skipCodyOutro").classList.remove("hidden");
+
     const outroVideo = interviewerOutros[currentInterviewType] || "placeholder.mp4";
 
     videoElement.classList.remove("inactive");
@@ -2474,14 +2476,10 @@ function skipToVideoEnd(videoId, buttonId) {
   const button = document.getElementById(buttonId);
   if (!video) return;
 
-  // Jump to 1 second before the end (or 0.5s if really short)
   const skipTime = Math.max(video.duration - 1, 0.5);
   video.currentTime = skipTime;
 
-  // Hide the skip button once clicked
-  if (button) button.style.display = "none";
-
-  // Ensure playback resumes
+  if (button) button.classList.add("hidden");
   video.play();
 }
 

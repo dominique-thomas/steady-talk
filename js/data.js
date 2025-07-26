@@ -472,7 +472,7 @@ const interviewQuestions = {
             keywords: {
                 general: ["supportive", "focused", "quiet", "collaborative", "independent", "remote", "hybrid", "transparent"]
             },
-            sampleAnswer: "I do really well in environments that are structured but flexible, where people are open to new ideas and communication flows   freely. I enjoy remote or hybrid setups where there's a good rhythm and mutual respect.",
+            sampleAnswer: "I do really well in environments that are structured but flexible, where people are open to new ideas and communication flows freely. I enjoy remote or hybrid setups where there's a good rhythm and mutual respect.",
         },
         {
             prompt: "What team environment do you work best in?",
