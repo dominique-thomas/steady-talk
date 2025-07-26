@@ -166,9 +166,9 @@ function init() {
 
 // Set the username 
 function setUsername(name) {
-    username = name;
     firstName = name.split(" ")[0];
     lastName = name.split(" ")[1];
+    username = firstName + " " + lastName;
 }
 
 // Helper function used to set the initials
@@ -2228,7 +2228,7 @@ function updateUsername() {
     openModal(title, `
         <div class="field-group">
           <p>Please enter your full name below. This name will be used throughout the simulation.</p>
-          <input type="text" id="modalUsername" placeholder="${username}" />
+          <input type="text" id="modalUsername" placeholder="${username}" maxlength="40"/>
         </div>
         <button id="submitUsername" class="primary-btn" title="Submit">Submit</button>
         <p id="usernameErrorModal" class="error-msg hidden">Please enter your full name.</p>
@@ -2466,6 +2466,23 @@ function pickMultipleRandom(arr, count) {
     }
 
     return result;
+}
+
+// Helper function that skips to the end of a specified video
+function skipToVideoEnd(videoId, buttonId) {
+  const video = document.getElementById(videoId);
+  const button = document.getElementById(buttonId);
+  if (!video) return;
+
+  // Jump to 1 second before the end (or 0.5s if really short)
+  const skipTime = Math.max(video.duration - 1, 0.5);
+  video.currentTime = skipTime;
+
+  // Hide the skip button once clicked
+  if (button) button.style.display = "none";
+
+  // Ensure playback resumes
+  video.play();
 }
 
 // Helper function that scrolls to the top of the window

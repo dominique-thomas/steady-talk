@@ -429,6 +429,7 @@ button:disabled {
   gap: 1rem;
 }
 
+.skip-btn,
 .outline-btn{
   background-color: #2a2a3d;
   border: 1px solid #5a3e95;
@@ -441,6 +442,16 @@ button:disabled {
 
 .intro-box button:hover {
   background-color: #6a36d4;
+}
+
+.skip-btn {
+  opacity: .9;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  z-index: 10;
 }
 
 .warning-btn {
@@ -589,7 +600,7 @@ button:disabled {
   gap: 0.5rem;
 }
 
-.industry-btn:hover, .outline-btn:hover {
+.industry-btn:hover, .outline-btn:hover, .skip-btn:hover {
   background-color: #3b3b5c;
 }
 

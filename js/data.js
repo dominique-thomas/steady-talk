@@ -424,7 +424,7 @@ const interviewQuestions = {
             sampleAnswer: "I've worked in customer operations for the past three years, supporting clients in the healthcare space. I recently completed a certification in data analytics, and I'm now looking to pivot into a more technical role where I can use both my people skills and my growing interest in tech.",
         },
         {
-            prompt: "What motivated you to apply for this role",
+            prompt: "What motivated you to apply for this role?",
             keywords: {
                 general: ["team", "mission", "goals", "values", "skills match", "career fit", "job title", "responsibilities"],
                 it: ["technology", "innovation", "scaling", "startups", "cutting-edge"],
