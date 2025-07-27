@@ -1,6 +1,6 @@
 # Steady Talk
 
-**Steady Talk** is a browser-based interview simulation designed to help individuals practice and refine their conversational and soft skills in a low-pressure environment. Users can engage in mock interviews across different stages using natural voice input, guided mentor feedback, and AI-driven insights.
+**Steady Talk** is a browser-based interview simulation designed to help individuals practice and refine their conversational and soft skills in a low-pressure environment. Users can engage in mock interviews across different stages using natural voice input, guided mentor feedback, and insights.
 
 ## Features
 - Voice recognition for natural, in-browser interview responses  
@@ -10,7 +10,7 @@
 - Supports multiple interview stages (Prescreen, Hiring Manager, and Team Fit)
 
 ## Purpose
-This project was developed to explore how browser-based technology and instructional design can make interview preparation more interactive and accessible. **Steady Talk** provides a safe, low-risk environment for users to practice answering real-world interview questions, improve communication, and build confidence over time.
+This project was developed to explore how browser-based technology and instructional design can enhance the interaction and accessibility of interview preparation. Steady Talk offers a safe and low-risk environment for users to practice answering real-world interview questions, enhance their communication skills, and build confidence over time.
 
 ## Technologies Used
 - HTML, CSS, JavaScript  
