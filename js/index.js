@@ -84,6 +84,7 @@ let webcamStream = null;
 let speechRecognition = null;
 let activeModalContext = null;
 let audioMediaRecorder = null;
+let restartTimer;
 let audioRecordingStartTime = 0;
 let videoMediaRecorder = null;
 let faceDetectorModel = null;
@@ -1293,9 +1294,9 @@ function loadNextQuestion() {
 
         // Add a slight delay to track data
         setTimeout(() => {
-            startHeadTracking();
+            startVideoCapture();            
             startAudioCapture();
-            startVideoCapture();
+            startHeadTracking();            
         }, 400);
     };
 }
@@ -1354,82 +1355,114 @@ function stopVideoCapture() {
 
 // Handles audio capturing 
 function startAudioCapture() {
+    
     audioTranscript = "";
     recordedAudioChunks = [];
+    lastResultIndex = 0;
 
-    if (webcamStream) {
-
-        audioRecordingStartTime = Date.now();
-        audioMediaRecorder = new MediaRecorder(webcamStream);
-
-        audioMediaRecorder.ondataavailable = e => {
-            if (e.data.size > 0) recordedAudioChunks.push(e.data);
-        };
-
-        audioMediaRecorder.start(100);
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        speechRecognition = new SpeechRecognition();
-        speechRecognition.lang = "en-US";
-        speechRecognition.continuous = true;
-        speechRecognition.interimResults = false;
-
-        speechRecognition.onresult = event => {
-            for (let i = lastResultIndex; i < event.results.length; i++) {
-                audioTranscript += event.results[i][0].transcript + " ";
-            }
-            lastResultIndex = event.results.length;
-            audioTranscript = audioTranscript.trim();
-        };
-
-        speechRecognition.start();
-        isAudioCaptureActive = true;
-
-        // Attempt to restart if the capture is still active
-        speechRecognition.onend = () => {
-            if (isAudioCaptureActive && audioMediaRecorder && audioMediaRecorder.state !== "inactive") {
-                try {
-                    speechRecognition.start();
-                } catch (err) {
-                    // Could not restart audio capture...
-                }
-            }
-        };        
-
-        // Stop recording audio after set amount of time
-        audioTimeout = setTimeout(() => {
-            stopAudioCapture();
-        }, MAX_MEDIA_DURATION);
-
-    } else {
-        console.error("Audio capture failed.");
+    if (!webcamStream) {
+        console.error("Audio capture failed (no webcam stream).");
+        return;
     }
+
+    audioMediaRecorder = new MediaRecorder(webcamStream);
+    audioMediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) recordedAudioChunks.push(e.data);
+    };
+    audioMediaRecorder.start(100);
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    speechRecognition = new SpeechRecognition();
+    speechRecognition.lang = "en-US";
+    speechRecognition.continuous = true;
+    speechRecognition.interimResults = true;
+
+    speechRecognition.onresult = (event) => {
+        for (let i = lastResultIndex; i < event.results.length; i++) {
+            const res = event.results[i];
+            if (res.isFinal) {
+                audioTranscript += res[0].transcript + " ";
+                lastResultIndex = i + 1;
+            }
+        }
+    };
+
+    // Auto-restart if it ends unexpectedly
+    speechRecognition.onend = () => {
+        if (isAudioCaptureActive && audioMediaRecorder?.state !== "inactive") {
+            try {
+                speechRecognition.start(); 
+            } catch (err) {
+                console.warn("SpeechRecognition restart failed:", err);
+            }
+        }
+    };
+
+    // Force a speech restart every 55s (Chrome workaround)
+    restartTimer = setInterval(() => {
+        if (isAudioCaptureActive) {
+            try {
+                speechRecognition.stop();
+            } catch (err) {
+                console.warn("Restart timer error:", err);
+            }
+        }
+    }, 55000);
+
+    try {
+        speechRecognition.start();
+    } catch (err) {
+        console.error("SpeechRecognition start error:", err);
+    }
+
+    isAudioCaptureActive = true;
+
+    audioTimeout = setTimeout(() => {
+        stopAudioCapture();
+    }, MAX_MEDIA_DURATION);
 }
 
 // Stops audio capture and saves data
 function stopAudioCapture() {
+    isAudioCaptureActive = false;
+
+    if (restartTimer) {
+        clearInterval(restartTimer);
+        restartTimer = null;
+    }
+
+    if (audioTimeout) {
+        clearTimeout(audioTimeout);
+        audioTimeout = null;
+    }
+
     if (audioMediaRecorder && audioMediaRecorder.state !== "inactive") {
         audioMediaRecorder.stop();
     }
+
     if (speechRecognition) {
-        speechRecognition.stop();
+        try {
+            speechRecognition.stop();
+        } catch (err) {
+            console.warn("Error stopping SpeechRecognition:", err);
+        }
         speechRecognition = null;
     }
 
-    clearTimeout(audioTimeout);
-    audioTimeout = null;
-    isAudioCaptureActive = false;
-    lastResultIndex = 0;
-
+    // Wrap up logic (already in your original stop)
     audioMediaRecorder.onstop = () => {
         const audioDuration = (Date.now() - audioRecordingStartTime) / 1000;
-        const audioBlob = new Blob(recordedAudioChunks, {
-            type: 'audio/webm'
-        });
+        const audioBlob = new Blob(recordedAudioChunks, { type: "audio/webm" });
 
         currentInterviewQuestions[currentQuestionIndex].audio = audioBlob;
-        currentInterviewQuestions[currentQuestionIndex].response = cleanTranscript(audioTranscript) || didNotAnswer
-        calculateInterviewInsights(currentInterviewQuestions[currentQuestionIndex], currentInterviewType, audioDuration);
+        currentInterviewQuestions[currentQuestionIndex].response =
+            cleanTranscript(audioTranscript) || didNotAnswer;
+
+        calculateInterviewInsights(
+            currentInterviewQuestions[currentQuestionIndex],
+            currentInterviewType,
+            audioDuration
+        );
     };
 }
 
@@ -1515,6 +1548,11 @@ function pauseInterviewMedia() {
 
     if (videoMediaRecorder && videoMediaRecorder.state !== "inactive") {
         videoMediaRecorder.stop();
+    }
+
+    if (restartTimer) {
+        clearInterval(restartTimer);
+        restartTimer = null;
     }
 
     if (audioTimeout) {
@@ -1760,6 +1798,11 @@ function stopMediaTracking(isRepeat = false) {
     if (speechRecognition) {
         speechRecognition.stop();
         speechRecognition = null;
+    }
+
+    if (restartTimer) {
+        clearInterval(restartTimer);
+        restartTimer = null;
     }
 
     if (audioTimeout) {
